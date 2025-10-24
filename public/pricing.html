@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pricing - Bot Companion Dashboard</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="pricing.css" />
+    <style>
+      canvas#cyberCanvas {
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: -1;
+        width: 100vw;
+        height: 100vh;
+        background: black;
+      }
+    </style>
+  </head>
+  <body class="cyberpunk-theme">
+    <canvas id="cyberCanvas"></canvas>
+
+    <header class="site-header">
+      <div class="header-container">
+        <nav class="nav-left" aria-label="Primary navigation">
+          <a href="index.html" class="nav-link">Product</a>
+          <a href="solutions.html" class="nav-link">Solutions</a>
+          <a href="resources.html" class="nav-link">Resources</a>
+          <a href="pricing.html" class="nav-link">Pricing</a>
+        </nav>
+
+        <!-- Logged out UI -->
+        <a href="#" class="logo-text" aria-label="BotDex home">
+          🤖 <span>BotDex</span>
+        </a>
+
+        <nav class="nav-right" aria-label="User navigation" id="loggedOutUI">
+          <a href="/login" class="nav-link">Log In</a>
+          <button class="btn btn--primary">Get Started</button>
+        </nav>
+
+        <!-- Logged in UI (hidden by default) -->
+        <div
+          id="loggedInUI"
+          style="display: none; align-items: center; gap: 10px"
+        >
+          <img
+            id="profilePic"
+            src=""
+            alt="Profile Picture"
+            style="width: 32px; height: 32px; border-radius: 50%"
+          />
+          <span id="username"></span>
+          <a href="/logout" class="nav-link">Logout</a>
+        </div>
+      </div>
+    </header>
+
+    <div class="container pricing-container">
+      <header class="header">
+        <h1>Data Plans & Pricing</h1>
+        <p>Choose your access level. Connect to the network.</p>
+      </header>
+
+      <main class="pricing-grid">
+        <!-- Tier 1: Free -->
+        <div class="pricing-card">
+          <div class="card-header">
+            <h3>Free Tier</h3>
+            <p class="price"><span>$0</span>/month</p>
+          </div>
+          <ul class="features-list">
+            <li><span class="check">✓</span> Access to 3 Standard Bots</li>
+            <li><span class="check">✓</span> 1,000 Messages/Month</li>
+            <li><span class="check">✓</span> Standard Community Support</li>
+            <li><span class="cross">✗</span> No Conversation History</li>
+            <li><span class="cross">✗</span> No Advanced AI Models</li>
+          </ul>
+          <button class="btn-select-plan">Select Plan</button>
+        </div>
+
+        <!-- Tier 2: Pro (Recommended) -->
+        <div class="pricing-card recommended">
+          <div class="recommended-badge">Recommended</div>
+          <div class="card-header">
+            <h3>Pro Tier</h3>
+            <p class="price"><span>$15</span>/month</p>
+          </div>
+          <ul class="features-list">
+            <li><span class="check">✓</span> Access to All 7 Bots</li>
+            <li><span class="check">✓</span> 20,000 Messages/Month</li>
+            <li><span class="check">✓</span> Priority Email Support</li>
+            <li><span class="check">✓</span> 30-Day Conversation History</li>
+            <li><span class="check">✓</span> Access to Advanced AI Models</li>
+          </ul>
+          <button class="btn-select-plan">Select Plan</button>
+        </div>
+
+        <!-- Tier 3: Enterprise -->
+        <div class="pricing-card">
+          <div class="card-header">
+            <h3>Enterprise</h3>
+            <p class="price"><span>Custom</span></p>
+          </div>
+          <ul class="features-list">
+            <li><span class="check">✓</span> Unlimited Bots & Messages</li>
+            <li><span class="check">✓</span> Dedicated 24/7 Support</li>
+            <li><span class="check">✓</span> Unlimited Conversation History</li>
+            <li><span class="check">✓</span> On-Premise Deployment Options</li>
+            <li><span class="check">✓</span> Custom Bot Development</li>
+          </ul>
+          <button class="btn-select-plan">Contact Sales</button>
+        </div>
+      </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/three@0.148.0/build/three.min.js"></script>
+    <script src="fog-bg.js"></script>
+
+    <!-- Check whether user is logged in or not -->
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        fetch("/api/user")
+          .then((res) => res.json())
+          .then((data) => {
+            const user = data.user;
+            const loggedOutUI = document.getElementById("loggedOutUI");
+            const loggedInUI = document.getElementById("loggedInUI");
+            const usernameSpan = document.getElementById("username");
+            const profilePic = document.getElementById("profilePic");
+
+            if (!loggedOutUI || !loggedInUI || !usernameSpan || !profilePic) {
+              console.error("One or more required DOM elements are missing");
+              return;
+            }
+
+            if (user) {
+              loggedOutUI.style.display = "none";
+              loggedInUI.style.display = "flex";
+
+              usernameSpan.textContent =
+                user.displayName || user.email || "User";
+
+              if (user.picture) {
+                profilePic.src = user.picture;
+              } else {
+                profilePic.src = "public/asset/bolt.png"; // optional fallback image
+              }
+            } else {
+              loggedOutUI.style.display = "flex";
+              loggedInUI.style.display = "none";
+            }
+          })
+          .catch((err) => {
+            console.error("Failed to fetch user info", err);
+          });
+      });
+    </script>
+  </body>
+</html>
